@@ -167,11 +167,13 @@ If you do not have Homebrew installed, install Homebrew first from `https://brew
 
 #### Windows
 
-Download PostgreSQL from the official PostgreSQL download page:
+Open **PowerShell** or **Windows Terminal** and run:
 
-`https://www.postgresql.org/download/windows/`
+```powershell
+winget install --id PostgreSQL.PostgreSQL.17
+```
 
-Run the installer and keep the default port `5432` unless you already use PostgreSQL on a different port. The installer will also ask you to create a password for the PostgreSQL user, so save that password somewhere you can find it later.
+Follow the PostgreSQL installer when it opens. Keep the default port `5432` unless you already use PostgreSQL on a different port, and save the password you create for the PostgreSQL user.
 
 After installation, make sure the PostgreSQL service is running before starting Bug Finder.
 
