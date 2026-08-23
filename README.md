@@ -1,6 +1,6 @@
 # GitHub Bug Finder
 
-Bug Finder helps you search old GitHub issues to find similar bugs faster.
+Bug Finder helps you search GitHub issues to find similar bugs faster.
 
 I made this because when I run into a bug, I usually end up searching old GitHub issues to see if someone else already had the same problem. That works, but it can take a while. Bug Finder makes that easier: describe the bug in normal words, and it shows issues that look related.
 
