@@ -178,6 +178,16 @@ For live GitHub search, set a GitHub token in your environment as `GITHUB_TOKEN`
 
 ## Why I made this
 
-This started as a SQL project, but I wanted it to do more than just run queries on a dataset. It turned into a tool that stores real GitHub issue data, searches it, and helps find similar problems faster.
+This project originally started as a SQL/database analysis project built around real public GitHub bug data. I began by collecting bug issues from GitHub, loading them into PostgreSQL, and writing SQL queries to analyze things like issue frequency, labels, repositories, recurring bug patterns, and how different types of issues were distributed.
 
-That made it a lot more useful to me than a normal SQL analysis project.
+After working on it more, I realized I wanted the project to be useful outside of just analysis. Instead of only asking questions about the data with SQL, I started building a search system around it.
+
+That eventually turned into Bug Finder.
+
+The project now stores GitHub issue data in PostgreSQL, creates vector embeddings from the issue text, and lets someone describe a bug in normal words and search for similar issues. I also added a live GitHub search so the app can look through current public issues without requiring every repository to already be stored locally.
+
+A lot of the work ended up going beyond SQL. I had to figure out how to organize issue data from multiple repositories, rank search results, compare semantic similarity, test whether the search was actually finding the right issues, and turn the backend into something people could use through a web interface.
+
+What I like about the project is that the SQL and database work still matter, but they are now part of something much larger. PostgreSQL is not just being used to store data. It supports the issue data, search system, repository ingestion, evaluation, and the web app.
+
+I also wanted to work on a problem that felt realistic. When I run into an error while coding, one of the first things I usually do is search GitHub issues to see if someone else has already had the same problem. Bug Finder is basically my attempt to make that process faster and easier.
