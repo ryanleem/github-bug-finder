@@ -1,0 +1,42 @@
+[
+  {
+    "query": "snowflake pipeline breaks when query tag contains quotation marks",
+    "relevant_issue": 31509
+  },
+  {
+    "query": "snowflake tables with quotation marks cannot be ingested",
+    "relevant_issue": 3166
+  },
+  {
+    "query": "postgres ingestion stops because logger error breaks stored procedure processing",
+    "relevant_issue": 30216
+  },
+  {
+    "query": "snowflake feature store system tags cause connector crash",
+    "relevant_issue": 30536
+  },
+  {
+    "query": "snowflake ingestion fails to retrieve sample rows",
+    "relevant_issue": 2413
+  },
+  {
+    "query": "postgres views are missing lineage",
+    "relevant_issue": 10312
+  },
+  {
+    "query": "metadata ingestion fails because of parsing configuration",
+    "relevant_issue": 28443
+  },
+  {
+    "query": "postgres metadata ingestion locks database tables and views",
+    "relevant_issue": 15414
+  },
+  {
+    "query": "mssql ingestion breaks because of sqlalchemy compatibility",
+    "relevant_issue": 29190
+  },
+  {
+    "query": "snowflake ingestion has duplicate constraint names between tables",
+    "relevant_issue": 26199
+  }
+]

@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Bug Finder</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Arial,
+                sans-serif;
+
+            background: #0d1117;
+            color: #e6edf3;
+        }
+
+        .container {
+            width: min(1050px, 92%);
+            margin: 0 auto;
+            padding: 48px 0 80px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 42px;
+            letter-spacing: -1px;
+        }
+
+        h2 {
+            margin-top: 0;
+            font-size: 21px;
+        }
+
+        .subtitle {
+            color: #8b949e;
+            font-size: 17px;
+            margin-top: 8px;
+        }
+
+        .stats {
+            color: #8b949e;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        .card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 22px;
+            margin-top: 24px;
+        }
+
+        .intro p {
+            color: #c9d1d9;
+            line-height: 1.6;
+        }
+
+        .steps {
+            color: #c9d1d9;
+            line-height: 1.8;
+            padding-left: 20px;
+        }
+
+        .steps li {
+            margin-bottom: 10px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        textarea,
+        input,
+        select {
+            width: 100%;
+            background: #0d1117;
+            color: #e6edf3;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 15px;
+        }
+
+        textarea {
+            min-height: 110px;
+            resize: vertical;
+        }
+
+        select {
+            margin-bottom: 20px;
+        }
+
+        .field {
+            margin-bottom: 18px;
+        }
+
+        button {
+            border: none;
+            background: #238636;
+            color: white;
+            padding: 11px 18px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #2ea043;
+        }
+
+        .secondary-button {
+            background: #21262d;
+            border: 1px solid #30363d;
+        }
+
+        .secondary-button:hover {
+            background: #30363d;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .small-text {
+            color: #8b949e;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .message {
+            border: 1px solid #238636;
+            background: rgba(35, 134, 54, 0.12);
+            padding: 13px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .error {
+            border: 1px solid #f85149;
+            background: rgba(248, 81, 73, 0.10);
+            padding: 13px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .divider {
+            height: 1px;
+            background: #30363d;
+            margin: 30px 0;
+        }
+
+        .result {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 10px;
+            padding: 18px;
+            margin-top: 12px;
+        }
+
+        .rank {
+            color: #8b949e;
+            font-size: 13px;
+        }
+
+        .repo {
+            color: #58a6ff;
+            font-size: 14px;
+            margin-top: 6px;
+        }
+
+        .result-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 8px 0;
+        }
+
+        .metadata {
+            color: #8b949e;
+            font-size: 13px;
+        }
+
+        .link {
+            margin-top: 10px;
+        }
+
+        a {
+            color: #58a6ff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        code {
+            background: #0d1117;
+            padding: 2px 5px;
+            border-radius: 5px;
+        }
+
+        .info-box {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 14px;
+            margin: 14px 0 18px;
+        }
+
+        .info-box p {
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        .info-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        @media (max-width: 760px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 34px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>
+        Bug Finder
+    </h1>
+
+    <div class="subtitle">
+        Find similar bugs from past GitHub issues.
+    </div>
+
+    <div class="stats">
+        {{ "{:,}".format(total_issues) }}
+        issues currently searchable across
+        {{ repositories|length }}
+        repositories.
+    </div>
+
+
+    {% if message %}
+
+        <div class="message">
+            {{ message }}
+        </div>
+
+    {% endif %}
+
+
+    {% if error %}
+
+        <div class="error">
+            {{ error }}
+        </div>
+
+    {% endif %}
+
+
+    <div class="card intro">
+
+        <h2>
+            What is Bug Finder?
+        </h2>
+
+        <p>
+            Bug Finder searches old GitHub issues for
+            problems that look similar to the one you
+            are currently dealing with.
+        </p>
+
+        <p>
+            Describe the problem in your own words,
+            and Bug Finder will show issues that may
+            be related.
+        </p>
+
+        <h2>
+            How to use it
+        </h2>
+
+        <ol class="steps">
+
+            <li>
+                Choose how you want to search.
+                <strong>Search Indexed Repositories</strong>
+                searches repositories already loaded into
+                Bug Finder. Two examples are
+                <code>pandas-dev/pandas</code>
+                and
+                <code>open-metadata/OpenMetadata</code>.
+            </li>
+
+            <li>
+                Or use
+                <strong>Search Public GitHub</strong>
+                to search current public GitHub issues.
+            </li>
+
+            <li>
+                If you know which repository the bug is from,
+                enter it in the optional Repository box.
+                For example:
+                <code>psf/requests</code>.
+            </li>
+
+            <li>
+                Describe your bug in your own words.
+                Include useful details like the error,
+                feature, or behavior that is not working.
+            </li>
+
+            <li>
+                Press Search.
+            </li>
+
+            <li>
+                After you search, scroll down to see
+                the closest matching issues.
+            </li>
+
+            <li>
+                Open any result to read the full GitHub
+                issue and see if it contains a fix,
+                workaround, or similar problem.
+            </li>
+
+        </ol>
+
+    </div>
+
+
+    <div class="card">
+
+        <h2>
+            Search Indexed Repositories
+        </h2>
+
+        <p class="small-text">
+            Search repositories that have already been
+            added to Bug Finder.
+        </p>
+
+        <form
+            action="/search"
+            method="post"
+        >
+
+            <div class="field">
+
+                <label>
+                    Repository
+                </label>
+
+                <select name="repository">
+
+                    <option
+                        value="ALL"
+
+                        {% if selected_repo == "ALL" %}
+                        selected
+                        {% endif %}
+                    >
+                        All repositories
+                    </option>
+
+                    {% for repo in repositories %}
+
+                        <option
+                            value="{{ repo.name }}"
+
+                            {% if selected_repo == repo.name %}
+                            selected
+                            {% endif %}
+                        >
+                            {{ repo.name }}
+                            ({{ "{:,}".format(repo.count) }} issues)
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    Describe the bug
+                </label>
+
+                <textarea
+                    name="query"
+                    placeholder="Example: groupby returns the wrong categorical group"
+                    required
+                >{{ query }}</textarea>
+
+            </div>
+
+
+            <button type="submit">
+                Search Indexed Repositories
+            </button>
+
+        </form>
+
+
+        <div class="divider"></div>
+
+
+        <h2>
+            Search Public GitHub
+        </h2>
+
+        <p class="small-text">
+            Search current public GitHub issues.
+        </p>
+
+        <form
+            action="/search-github"
+            method="post"
+        >
+
+            <div class="field">
+
+                <label>
+                    Repository
+                    <span class="small-text">
+                        (optional)
+                    </span>
+                </label>
+
+                <input
+                    type="text"
+                    name="github_repository"
+                    value="{{ github_repository | default('') }}"
+                    placeholder="Example: psf/requests"
+                    autocomplete="off"
+                >
+
+                <p class="small-text">
+                    Leave this blank to search all public GitHub issues.
+                    Enter a repository if you know where the bug is happening.
+                </p>
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    Describe the bug
+                </label>
+
+                <textarea
+                    name="query"
+                    placeholder="Example: upload body gets lost after a redirect and the request times out"
+                    required
+                >{{ query }}</textarea>
+
+            </div>
+
+
+            <button type="submit">
+                Search Public GitHub
+            </button>
+
+            <p class="small-text">
+                Live GitHub search may take a little while to finish.
+                Please wait for the results before clicking Search again.
+                Repeated searches can temporarily hit GitHub's API rate limit.
+            </p>
+
+        </form>
+
+    </div>
+
+
+    <div class="card">
+
+        <h2>
+            Add issues to Bug Finder
+        </h2>
+
+        <p>
+            There are two ways to add GitHub issues
+            so they stay available in the indexed search.
+        </p>
+
+        <ol class="steps">
+
+            <li>
+                <strong>Add a GitHub Repository</strong>
+                if you want Bug Finder to download the
+                repository's bug issues for you.
+            </li>
+
+            <li>
+                <strong>Upload GitHub Issue Data</strong>
+                if you already have GitHub issues saved
+                as a JSON file.
+            </li>
+
+        </ol>
+
+        <p class="small-text">
+            Most users can just use Add a GitHub Repository.
+            The JSON option is only useful if you already
+            have GitHub issue data saved in a file.
+        </p>
+
+    </div>
+
+
+    <div class="grid">
+
+        <div class="card">
+
+            <h2>
+                Add a GitHub Repository
+            </h2>
+
+            <p class="small-text">
+                Enter a public repository such as
+                <code>psf/requests</code>.
+            </p>
+
+            <p class="small-text">
+                Bug Finder will download its issues
+                labeled "bug", store them, and make
+                them searchable.
+            </p>
+
+            <form
+                action="/add-repository"
+                method="post"
+            >
+
+                <div class="field">
+
+                    <label>
+                        Repository
+                    </label>
+
+                    <input
+                        type="text"
+                        name="repository"
+                        placeholder="owner/repository"
+                        required
+                    >
+
+                </div>
+
+                <button type="submit">
+                    Add Repository
+                </button>
+
+            </form>
+
+            <p class="small-text">
+                Large repositories can take several
+                minutes to process.
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h2>
+                Already Have GitHub Issue Data?
+            </h2>
+
+            <p class="small-text">
+                Most users do not need this.
+                Use this only if you already have GitHub
+                issues saved as a JSON file.
+            </p>
+
+            <div class="info-box">
+
+                <p class="small-text">
+                    The file must contain
+                    <strong>GitHub issue-style JSON</strong>.
+                    The records should look like issue data
+                    returned by GitHub and include fields such
+                    as an issue ID, issue number, title, state,
+                    dates, labels, and other issue information.
+                </p>
+
+                <p class="small-text">
+                    Not sure what GitHub issue JSON looks like?
+                    GitHub's official Issues API documentation
+                    includes example responses showing the
+                    structure of GitHub issue records.
+                </p>
+
+                <p class="small-text">
+                    <a
+                        href="https://docs.github.com/en/rest/issues/issues?apiVersion=2022-11-28"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        View GitHub's issue JSON examples →
+                    </a>
+                </p>
+
+            </div>
+
+            <form
+                action="/upload"
+                method="post"
+                enctype="multipart/form-data"
+            >
+
+                <div class="field">
+
+                    <label>
+                        Repository
+                        <span class="small-text">
+                            (optional if included in the JSON)
+                        </span>
+                    </label>
+
+                    <input
+                        type="text"
+                        name="repository"
+                        placeholder="owner/repository"
+                    >
+
+                </div>
+
+
+                <div class="field">
+
+                    <label>
+                        GitHub Issues JSON File
+                    </label>
+
+                    <input
+                        type="file"
+                        name="file"
+                        accept=".json,application/json"
+                        required
+                    >
+
+                </div>
+
+
+                <button
+                    class="secondary-button"
+                    type="submit"
+                >
+                    Upload GitHub Issue Data
+                </button>
+
+            </form>
+
+
+            <p class="small-text">
+                If you are not sure what this section is for,
+                you can ignore it and use
+                <strong>Add a GitHub Repository</strong>
+                instead.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    {% if searched %}
+
+        <div class="divider"></div>
+
+        <h2>
+            {% if search_mode == "github" %}
+                Live GitHub Results
+            {% else %}
+                Indexed Repository Results
+            {% endif %}
+        </h2>
+
+
+        {% if results %}
+
+            {% for result in results %}
+
+                <div class="result">
+
+                    <div class="rank">
+                        Result #{{ loop.index }}
+                    </div>
+
+                    <div class="repo">
+                        {{ result.repository }}
+                        #{{ result.issue_number }}
+                    </div>
+
+                    <div class="result-title">
+                        {{ result.title }}
+                    </div>
+
+                    <div class="metadata">
+                        Match score:
+                        {{ "%.4f"|format(result.final_score) }}
+
+                        &nbsp; · &nbsp;
+
+                        State:
+                        {{ result.state }}
+                    </div>
+
+                    <div class="link">
+
+                        <a
+                            href="{{ result.url }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            Open GitHub issue →
+                        </a>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="card">
+                No matching issues were found.
+            </div>
+
+        {% endif %}
+
+    {% endif %}
+
+</div>
+
+<script>
+    if (window.location.search) {
+        window.history.replaceState(
+            {},
+            document.title,
+            window.location.pathname
+        );
+    }
+</script>
+
+</body>
+
+</html>

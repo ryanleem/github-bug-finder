@@ -1,0 +1,103 @@
+[
+  {
+    "repository": "pandas-dev/pandas",
+    "query": "business day rollforward accepts a date at runtime but static typing rejects it",
+    "relevant_issue": 66877
+  },
+  {
+    "repository": "pandas-dev/pandas",
+    "query": "empty CSV values stored as pyarrow floats become NaN instead of null so fillna does nothing",
+    "relevant_issue": 66834
+  },
+  {
+    "repository": "pandas-dev/pandas",
+    "query": "concatenating dataframes created from Arrow zero copy data unexpectedly copies memory",
+    "relevant_issue": 54991
+  },
+  {
+    "repository": "pandas-dev/pandas",
+    "query": "read_csv sometimes causes a bus error or segmentation fault",
+    "relevant_issue": 51791
+  },
+  {
+    "repository": "pandas-dev/pandas",
+    "query": "large CSV files sometimes fail with inconsistent C parser tokenizing errors",
+    "relevant_issue": 40587
+  },
+  {
+    "repository": "pandas-dev/pandas",
+    "query": "custom dataframe accessor instance cannot access its __name__ attribute",
+    "relevant_issue": 45328
+  },
+  {
+    "repository": "pandas-dev/pandas",
+    "query": "infer_objects leaves a series containing pd NA as object instead of nullable float",
+    "relevant_issue": 54417
+  },
+  {
+    "repository": "pandas-dev/pandas",
+    "query": "read_csv leaves zip file handle open after the read fails",
+    "relevant_issue": 58131
+  },
+  {
+    "repository": "pandas-dev/pandas",
+    "query": "assert_series_equal errors instead of reporting inequality for ExtensionArray data",
+    "relevant_issue": 45240
+  },
+  {
+    "repository": "pandas-dev/pandas",
+    "query": "tables created with dataframe to_sql cannot later be dropped or truncated through execute",
+    "relevant_issue": 50967
+  },
+
+  {
+    "repository": "open-metadata/OpenMetadata",
+    "query": "large OpenAPI ingestion creates endpoints before their API collections exist",
+    "relevant_issue": 30598
+  },
+  {
+    "repository": "open-metadata/OpenMetadata",
+    "query": "REST API connector loses fields when request schema root is an array",
+    "relevant_issue": 30597
+  },
+  {
+    "repository": "open-metadata/OpenMetadata",
+    "query": "MLflow 3 ingestion cannot extract model features after log model history tag was removed",
+    "relevant_issue": 31889
+  },
+  {
+    "repository": "open-metadata/OpenMetadata",
+    "query": "unauthenticated MCP request leaks a full Java stack trace in the response",
+    "relevant_issue": 31871
+  },
+  {
+    "repository": "open-metadata/OpenMetadata",
+    "query": "MCP semantic search returns assets outside the caller's allowed domains",
+    "relevant_issue": 30023
+  },
+  {
+    "repository": "open-metadata/OpenMetadata",
+    "query": "temporary Kubernetes HTTP 503 makes ingestion permanently fail instead of retrying",
+    "relevant_issue": 31870
+  },
+  {
+    "repository": "open-metadata/OpenMetadata",
+    "query": "Looker lineage cannot parse quoted Snowflake column names",
+    "relevant_issue": 31866
+  },
+  {
+    "repository": "open-metadata/OpenMetadata",
+    "query": "sample data page crashes when a column is named children",
+    "relevant_issue": 28585
+  },
+  {
+    "repository": "open-metadata/OpenMetadata",
+    "query": "PII detection skips identifiers stored as numeric values",
+    "relevant_issue": 31847
+  },
+  {
+    "repository": "open-metadata/OpenMetadata",
+    "query": "MSSQL view definitions are missing and lineage cannot be generated",
+    "relevant_issue": 30966
+  }
+]

@@ -1,0 +1,82 @@
+[
+  {
+    "query": "playwright UI test times out after status filter URL changed to bracketed array parameters",
+    "relevant_issue": 31912
+  },
+  {
+    "query": "large OpenAPI ingestion creates endpoints before their API collections exist",
+    "relevant_issue": 30598
+  },
+  {
+    "query": "REST API connector loses request and response fields when schema root is an array",
+    "relevant_issue": 30597
+  },
+  {
+    "query": "MLflow 3 models lose feature extraction because log model history tag no longer exists",
+    "relevant_issue": 31889
+  },
+  {
+    "query": "unauthenticated MCP request exposes full Java stack trace in 401 response",
+    "relevant_issue": 31871
+  },
+  {
+    "query": "MCP semantic search ignores domain permissions and returns unauthorized assets",
+    "relevant_issue": 30023
+  },
+  {
+    "query": "ingestion permanently fails when Kubernetes temporarily returns HTTP 503 during pod restart",
+    "relevant_issue": 31870
+  },
+  {
+    "query": "Looker lineage cannot parse Snowflake column names wrapped in quotes",
+    "relevant_issue": 31866
+  },
+  {
+    "query": "recreating a deleted domain with the same name restores old assets and history",
+    "relevant_issue": 28923
+  },
+  {
+    "query": "sample data page crashes when database column is literally named children",
+    "relevant_issue": 28585
+  },
+  {
+    "query": "domain documentation page appears blank until user switches tabs",
+    "relevant_issue": 29940
+  },
+  {
+    "query": "PII classifier ignores sensitive identifiers stored in numeric columns",
+    "relevant_issue": 31847
+  },
+  {
+    "query": "PII column name recognizers never tag matching columns",
+    "relevant_issue": 31846
+  },
+  {
+    "query": "PII custom recognizer stops working when supported language is set to any",
+    "relevant_issue": 31845
+  },
+  {
+    "query": "ETag returned by GET always causes 412 when reused in PATCH If-Match",
+    "relevant_issue": 30885
+  },
+  {
+    "query": "MSSQL views are missing schema definitions so lineage cannot be generated",
+    "relevant_issue": 30966
+  },
+  {
+    "query": "metadata disappears after Docker restart even though entities still exist",
+    "relevant_issue": 31679
+  },
+  {
+    "query": "non admin users with domain permissions cannot view database services or ingestion runner",
+    "relevant_issue": 31783
+  },
+  {
+    "query": "Kubernetes pipeline status fails because allocatedResources cannot be deserialized",
+    "relevant_issue": 29572
+  },
+  {
+    "query": "data product page does not display visual styling for important tags",
+    "relevant_issue": 31733
+  }
+]
