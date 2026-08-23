@@ -35,7 +35,7 @@ You can also add more issue data in two ways:
 ### Search indexed repositories
 
 1. Pick a repository from the dropdown, or leave it on **All repositories**.
-2. Describe the bug in your own words.
+2. Describe the bug.
 3. Click **Search Indexed Repositories**.
 4. Scroll down to see the closest matches.
 
