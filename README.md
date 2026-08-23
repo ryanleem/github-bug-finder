@@ -150,9 +150,30 @@ cd github-bug-finder
 python3 -m pip install -r requirements.txt
 ```
 
-### 3. Start PostgreSQL
+### 3. Install and start PostgreSQL
 
-Make sure PostgreSQL is installed and running before starting the app.
+Bug Finder uses PostgreSQL to store and search GitHub issue data.
+
+#### macOS
+
+If you use Homebrew, run:
+
+```bash
+brew install postgresql@17
+brew services start postgresql@17
+```
+
+If you do not have Homebrew installed, install Homebrew first from `https://brew.sh/`, then run the commands above.
+
+#### Windows
+
+Download PostgreSQL from the official PostgreSQL download page:
+
+`https://www.postgresql.org/download/windows/`
+
+Run the installer and keep the default port `5432` unless you already use PostgreSQL on a different port. The installer will also ask you to create a password for the PostgreSQL user, so save that password somewhere you can find it later.
+
+After installation, make sure the PostgreSQL service is running before starting Bug Finder.
 
 ### 4. Start Bug Finder
 
