@@ -92,6 +92,15 @@ That is **11,336 indexed issues** across the two main test repositories.
 
 I tested the indexed search using 20 manually written bug descriptions across pandas and OpenMetadata. The descriptions were paraphrased instead of copied directly from issue titles.
 
+The metrics below measure how often the correct issue appeared near the top of the results:
+
+- **Hit@1** — the correct issue was the very first result.
+- **Hit@5** — the correct issue appeared somewhere in the top 5 results.
+- **Hit@10** — the correct issue appeared somewhere in the top 10 results.
+- **MRR@10** — gives a higher score when the correct issue appears closer to the top. A score closer to `1.0` is better.
+
+For example, a **Hit@5 of 100%** means the correct issue appeared within the first five results for every test query.
+
 | Search method | Hit@1 | Hit@5 | Hit@10 | MRR@10 |
 |---|---:|---:|---:|---:|
 | Semantic search | 70% | 90% | 90% | 0.783 |
