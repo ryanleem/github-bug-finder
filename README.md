@@ -133,30 +133,44 @@ README.md
 
 ## Running it locally
 
-Clone the repo:
+You will run the commands below in a terminal. On macOS, open **Terminal**. On Windows, use **PowerShell** or **Windows Terminal**.
+
+### 1. Clone the repo
+
+In the terminal, run:
 
 ```bash
-git clone https://github.com/ryanleem/openmetadata-bug-intelligence.git
-cd openmetadata-bug-intelligence
+git clone https://github.com/ryanleem/github-bug-finder.git
+cd github-bug-finder
 ```
 
-Install the Python packages:
+### 2. Install the Python packages
 
 ```bash
 python3 -m pip install -r requirements.txt
 ```
 
-Make sure PostgreSQL is running, then start the web app:
+### 3. Start PostgreSQL
+
+Make sure PostgreSQL is installed and running before starting the app.
+
+### 4. Start Bug Finder
+
+From inside the `github-bug-finder` folder, run:
 
 ```bash
 python3 -m uvicorn app.main:app --reload
 ```
 
-Open:
+The terminal should show a local address similar to:
 
 ```text
 http://127.0.0.1:8000
 ```
+
+Open that address in your web browser.
+
+`127.0.0.1` means **your own computer**, so anyone running Bug Finder locally can use this address. It does not point to my computer or a public website. If Uvicorn starts on a different port, use the address shown in that person's terminal instead.
 
 For live GitHub search, set a GitHub token in your environment as `GITHUB_TOKEN`. Do not put the token in the repo.
 
