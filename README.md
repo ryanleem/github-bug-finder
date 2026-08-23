@@ -1,0 +1,1 @@
+# openmetadata-bug-intelligence
