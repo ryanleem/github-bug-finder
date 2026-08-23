@@ -1,4 +1,4 @@
-# Bug Finder
+# GitHub Bug Finder
 
 Bug Finder helps you search old GitHub issues to find similar bugs faster.
 
