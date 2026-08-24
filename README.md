@@ -1,24 +1,21 @@
 # GitHub Bug Finder
 
-Bug Finder helps you search GitHub issues to find similar bugs faster.
+Bug Finder lets you describe a coding bug in normal words and search for GitHub issues that look similar.
 
-I made this because when I run into a bug, I usually end up searching GitHub issues to see if someone else already had the same problem. That works, but it can take a while. Bug Finder makes that easier: simply describe the bug, and it shows issues that look related.
+I made it after noticing how often I search old GitHub issues when I run into an error. Normal keyword search works, but the wording in an issue is not always the same as the wording I would use to describe the problem.
 
-## What it does
+## What It Does
 
-Bug Finder has two main ways to search:
+Bug Finder supports two kinds of search:
 
-- **Search Indexed Repositories** — search repositories that are already loaded into Bug Finder.
-- **Search Public GitHub** — search current public GitHub issues live.
+- **Indexed search** — searches GitHub issues already stored in PostgreSQL.
+- **Live GitHub search** — searches current public GitHub issues through the GitHub API and reranks the results.
 
-You can also add more issue data in two ways:
-
-- **Add a GitHub Repository** — enter a public repo such as `psf/requests` and Bug Finder downloads its issues labeled `bug` so they stay searchable.
-- **Upload GitHub Issue Data** — for people who already have GitHub issue data saved as JSON.
+It can also add more issue data by downloading bug-labeled issues from a public repository or by importing GitHub issue-style JSON.
 
 ## Screenshots
 
-### Home and instructions
+### Home
 
 ![Bug Finder home](assets/screenshots/bug-finder-home.png)
 
@@ -30,123 +27,58 @@ You can also add more issue data in two ways:
 
 ![Bug Finder add issues](assets/screenshots/bug-finder-add-issues.png)
 
-## How to use it
+## How the Search Works
 
-### Search indexed repositories
+For indexed repositories, issue text is stored in PostgreSQL and embedded with `all-MiniLM-L6-v2`. A bug description is compared with the stored issues and the closest matches are ranked.
 
-1. Pick a repository from the dropdown, or leave it on **All repositories**.
-2. Describe the bug.
-3. Click **Search Indexed Repositories**.
-4. Scroll down to see the closest matches.
+For live GitHub search, the app:
 
-Two repositories currently used in the project are `pandas-dev/pandas` and `open-metadata/OpenMetadata`.
+1. builds a few short GitHub searches from the bug description
+2. collects possible issue matches
+3. removes duplicates
+4. compares the full description with each issue
+5. reranks the best results
 
-### Search public GitHub
+The current reranking score uses:
 
-1. If you know which repo the bug is from, enter it in the optional Repository box. Example: `psf/requests`.
-2. Describe the bug in normal words.
-3. Click **Search Public GitHub**.
-4. Scroll down to see the results.
+- 85% semantic similarity
+- 15% title word overlap
 
-Live GitHub search uses GitHub's API, so repeated searches can temporarily hit GitHub's rate limit. Wait for a search to finish before clicking again.
+The goal is not to claim an issue is definitely the fix. It is to move useful old reports closer to the top so they are faster to find.
 
-## Example
+## Data Used
 
-I tested the public GitHub search with this description:
-
-> upload body gets lost after a redirect and the request eventually times out
-
-with the repository set to `psf/requests`.
-
-The exact issue I was looking for, `psf/requests #7432` (`prepare_body` stream detection regression), appeared at rank **#5**. The higher results were also related to redirects, request bodies, and timeouts.
-
-## How the search works
-
-The indexed search stores GitHub issues in PostgreSQL and creates embeddings with `all-MiniLM-L6-v2`. When you type a bug description, Bug Finder compares your description with stored issues and ranks the closest matches.
-
-The public GitHub search works a little differently:
-
-1. It builds a few short GitHub searches from the important parts of your bug description.
-2. GitHub returns possible matching issues.
-3. Bug Finder combines those results and removes duplicates.
-4. It compares your full description with the issue title and body.
-5. It ranks the best matches and shows the top 10.
-
-The final reranking score currently uses:
-
-- **85% semantic similarity**
-- **15% title word overlap**
-
-The goal is not to prove that an issue is the exact fix. It is to make it faster to find old reports that are worth checking.
-
-## Data used
-
-The project currently uses public GitHub issue data from:
+The main indexed test data contains:
 
 - `open-metadata/OpenMetadata` — 1,824 bug issues
 - `pandas-dev/pandas` — 9,512 bug issues
 
-That is **11,336 indexed issues** across the two main test repositories.
+That gives **11,336 indexed issues** across the two repositories.
 
 ## Evaluation
 
-I tested the indexed search using 20 manually written bug descriptions across pandas and OpenMetadata. The descriptions were paraphrased instead of copied directly from issue titles.
+I tested indexed search with 20 manually written bug descriptions across pandas and OpenMetadata. I paraphrased the bugs instead of copying the issue titles.
 
-The metrics below measure how often the correct issue appeared near the top of the results:
-
-- **Hit@1** — the correct issue was the very first result.
-- **Hit@5** — the correct issue appeared somewhere in the top 5 results.
-- **Hit@10** — the correct issue appeared somewhere in the top 10 results.
-- **MRR@10** — gives a higher score when the correct issue appears closer to the top. A score closer to `1.0` is better.
-
-For example, a **Hit@5 of 100%** means the correct issue appeared within the first five results for every test query.
-
-| Search method | Hit@1 | Hit@5 | Hit@10 | MRR@10 |
+| Search Method | Hit@1 | Hit@5 | Hit@10 | MRR@10 |
 |---|---:|---:|---:|---:|
 | Semantic search | 70% | 90% | 90% | 0.783 |
 | Semantic + title reranking | **80%** | **100%** | **100%** | **0.868** |
 
-For the pandas half of the test set, Hit@1 improved from **50% to 70%** and MRR@10 improved from **0.633 to 0.803**. OpenMetadata stayed the same at 90% Hit@1.
+`Hit@5 = 100%` means the correct issue appeared somewhere in the first five results for every test query.
 
-This is a small manual benchmark, so I treat it as a useful test of the project rather than proof that the ranking will work perfectly on every repository.
+The benchmark is small, so I treat it as a useful project test rather than proof that the ranking will work the same way on every repository.
 
-## Tech used
+## Example
 
-- Python
-- SQL
-- PostgreSQL
-- pgvector
-- sentence-transformers
-- FastAPI
-- Jinja2 / HTML
-- GitHub REST API
+For this bug description:
 
-## Project structure
+> upload body gets lost after a redirect and the request eventually times out
 
-```text
-app/
-  main.py
-  templates/
-    index.html
+with the repository set to `psf/requests`, the issue I was looking for appeared at rank **#5**. The results above it were also related to redirects, request bodies, and timeouts.
 
-data/
-database/
-docs/
-evaluation/
-queries/
-scripts/
-assets/
-  screenshots/
-README.md
-```
-
-## Running it locally
-
-You will run the commands below in a terminal. On macOS, open **Terminal**. On Windows, use **PowerShell** or **Windows Terminal**.
+## How to Run It Locally
 
 ### 1. Clone the repo
-
-In the terminal, run:
 
 ```bash
 git clone https://github.com/ryanleem/github-bug-finder.git
@@ -159,81 +91,86 @@ cd github-bug-finder
 python3 -m pip install -r requirements.txt
 ```
 
-### 3. Install and start PostgreSQL
+### 3. Install PostgreSQL
 
-Bug Finder uses PostgreSQL to store and search GitHub issue data.
+Bug Finder uses PostgreSQL for stored issue data.
 
-#### macOS
-
-If you use Homebrew, run:
+On macOS with Homebrew:
 
 ```bash
 brew install postgresql@17
 brew services start postgresql@17
 ```
 
-If you do not have Homebrew installed, install Homebrew first from `https://brew.sh/`, then run the commands above.
+The current local database settings are near the top of `app/main.py`:
 
-#### Windows
-
-Open **PowerShell** or **Windows Terminal** and run:
-
-```powershell
-winget install --id PostgreSQL.PostgreSQL.17
+```python
+DB_NAME = "openmetadata_bug_intelligence"
+DB_USER = "ryanleem"
+DB_HOST = "localhost"
+DB_PORT = 5432
 ```
 
-Follow the PostgreSQL installer when it opens. Keep the default port `5432` unless you already use PostgreSQL on a different port, and save the password you create for the PostgreSQL user.
+Change `DB_USER` to your local PostgreSQL username before running the app on another machine. The project database also needs the tables/indexes used by the SQL files in `database/`.
 
-After installation, make sure the PostgreSQL service is running before starting Bug Finder.
+### 4. Optional: set a GitHub token
 
-### 4. Start Bug Finder
+Live GitHub search works better with an API token because unauthenticated requests have a lower rate limit.
 
-From inside the `github-bug-finder` folder, run:
+Set it as an environment variable instead of putting it in the repository:
+
+```bash
+export GITHUB_TOKEN="your_token_here"
+```
+
+### 5. Start the app
 
 ```bash
 python3 -m uvicorn app.main:app --reload
 ```
 
-The terminal should show a local address similar to:
+Open the local address shown in the terminal, normally:
 
 ```text
 http://127.0.0.1:8000
 ```
 
-Open that address in your web browser.
+## Tech Used
 
-`127.0.0.1` means **your own computer**, so anyone running Bug Finder locally can use this address. It does not point to my computer or a public website. If Uvicorn starts on a different port, use the address shown in that person's terminal instead.
+- Python
+- SQL
+- PostgreSQL
+- pgvector
+- sentence-transformers
+- FastAPI
+- Jinja2 / HTML
+- GitHub REST API
 
-For live GitHub search, set a GitHub token in your environment as `GITHUB_TOKEN`. Do not put the token in the repo.
+## Project Structure
 
-## Current limitations
+```text
+app/          FastAPI app and HTML template
+data/         issue data used by the project
+database/     SQL tables, features, and indexes
+docs/         project notes
+evaluation/   search evaluation work
+queries/      SQL analysis queries
+scripts/      ingestion and processing scripts
+assets/       screenshots
+```
 
-- Live GitHub search depends on GitHub API rate limits.
-- Large repositories can take a while to download and process.
+## Current Limitations
+
+- Live search is limited by the GitHub API rate limit.
+- Large repositories take longer to download and embed.
 - Search results are possible matches, not guaranteed fixes.
-- The JSON upload expects GitHub issue-style data.
-- The evaluation set is still small.
+- The manual evaluation set is still small.
+- Local PostgreSQL setup is currently configured in `app/main.py` rather than through a full setup script.
 
-## Things I would improve next
+## Why I Made It
 
-- test live GitHub search on a larger set of known issues
-- improve candidate search without using too many API calls
-- add better filters for repository, label, and issue state
-- make repository ingestion faster for large repos
-- deploy the app so other people can use it online
+This started as a SQL project built around public GitHub bug data. I collected issues, stored them in PostgreSQL, and wrote queries to study the data.
 
-## Why I made this
+I eventually wanted the database work to lead to something I would actually use, so I built search on top of it. The project grew into a mix of SQL, vector search, API work, evaluation, and a small web app.
 
-This project originally started as a SQL/database analysis project built around real public GitHub bug data. I began by collecting bug issues from GitHub, loading them into PostgreSQL, and writing SQL queries to analyze things like issue frequency, labels, repositories, recurring bug patterns, and how different types of issues were distributed.
-
-After working on it more, I realized I wanted the project to be useful outside of just analysis. Instead of only asking questions about the data with SQL, I started building a search system around it.
-
-That eventually turned into Bug Finder.
-
-The project now stores GitHub issue data in PostgreSQL, creates vector embeddings from the issue text, and lets someone describe a bug in normal words and search for similar issues. I also added a live GitHub search so the app can look through current public issues without requiring every repository to already be stored locally.
-
-A lot of the work ended up going beyond SQL. I had to figure out how to organize issue data from multiple repositories, rank search results, compare semantic similarity, test whether the search was actually finding the right issues, and turn the backend into something people could use through a web interface.
-
-What I like about the project is that the SQL and database work still matter, but they are now part of something much larger. PostgreSQL is not just being used to store data. It supports the issue data, search system, repository ingestion, evaluation, and the web app.
-
-I also wanted to work on a problem that felt realistic. When I run into an error while coding, one of the first things I usually do is search GitHub issues to see if someone else has already had the same problem. Bug Finder is basically my attempt to make that process faster and easier.
+The problem is simple: when I hit a bug, I want to know whether someone has already reported something similar. Bug Finder is my attempt to make that search quicker.
