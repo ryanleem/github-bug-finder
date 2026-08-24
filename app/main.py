@@ -675,7 +675,6 @@ def normalize_uploaded_json(
     return normalized, stats
 
 
-
 # --------------------------------------------------
 # Live GitHub search
 # --------------------------------------------------
@@ -978,12 +977,55 @@ def build_github_search_queries(
             search_query
         )
 
-        # Maximum 3 GitHub Search API calls
-        # per Bug Finder search.
+        # Start with a few focused GitHub searches.
         if len(search_queries) >= 3:
             break
 
     return search_queries
+
+
+def build_github_fallback_queries(
+    query,
+    repository="",
+    existing_queries=None,
+):
+    terms = extract_ordered_query_terms(
+        query
+    )
+
+    if not terms:
+        terms = [
+            word
+            for word in re.findall(
+                r"[A-Za-z0-9_]+",
+                query.lower(),
+            )
+            if word not in STOP_WORDS
+            and len(word) > 2
+        ]
+        terms = list(dict.fromkeys(terms))
+
+    seen_queries = set(
+        existing_queries or []
+    )
+    fallback_queries = []
+
+    # Broader one-term searches give the semantic reranker
+    # enough candidates when GitHub's focused keyword search
+    # is too strict.
+    for term in terms[:4]:
+        search_query = f"{term} is:issue"
+
+        if repository:
+            search_query += f" repo:{repository}"
+
+        if search_query in seen_queries:
+            continue
+
+        seen_queries.add(search_query)
+        fallback_queries.append(search_query)
+
+    return fallback_queries
 
 
 def github_search_request(
@@ -1032,6 +1074,22 @@ def github_search_request(
     )
 
 
+def merge_github_issues(
+    merged_issues,
+    items,
+):
+    for item in items:
+        if "pull_request" in item:
+            continue
+
+        issue_id = item.get("id")
+
+        if issue_id is None:
+            continue
+
+        merged_issues[issue_id] = item
+
+
 def search_github_live(
     query,
     repository="",
@@ -1054,21 +1112,40 @@ def search_github_live(
         items = github_search_request(
             search_query
         )
+        merge_github_issues(
+            merged_issues,
+            items,
+        )
 
-        for item in items:
-            if "pull_request" in item:
-                continue
+    # GitHub's issue search treats multiple words as a strict
+    # keyword query. If those focused searches do not produce
+    # enough candidates, broaden the search one term at a time
+    # and let the embedding model do the relevance ranking.
+    if len(merged_issues) < LIVE_GITHUB_CANDIDATES:
+        fallback_queries = (
+            build_github_fallback_queries(
+                query,
+                repository,
+                search_queries,
+            )
+        )
 
-            issue_id = item.get(
-                "id"
+        for search_query in fallback_queries:
+            items = github_search_request(
+                search_query
+            )
+            merge_github_issues(
+                merged_issues,
+                items,
             )
 
-            if issue_id is None:
-                continue
+            if len(merged_issues) >= LIVE_GITHUB_CANDIDATES:
+                break
 
-            merged_issues[
-                issue_id
-            ] = item
+    print(
+        "GitHub candidates collected:",
+        len(merged_issues),
+    )
 
     issues = list(
         merged_issues.values()
@@ -1310,8 +1387,6 @@ def search(
                 "local",
         },
     )
-
-
 
 
 # --------------------------------------------------
