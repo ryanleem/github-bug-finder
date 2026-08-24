@@ -1,12 +1,12 @@
 # GitHub Bug Finder
 
-Bug Finder lets you describe a coding bug in normal words and search for GitHub issues that look similar.
+GitHub Bug Finder lets you describe a coding bug in your own words and search for GitHub issues that look similar.
 
-I made it after noticing how often I search old GitHub issues when I run into an error. Normal keyword search works, but the wording in an issue is not always the same as the wording I would use to describe the problem.
+I built it because I kept searching through old GitHub issues whenever I ran into an error, and keyword search was not always enough. The wording in an issue can be completely different from how I would describe the same problem.
 
 ## What It Does
 
-Bug Finder supports two kinds of search:
+Bug Finder supports two search modes:
 
 - **Indexed search** — searches GitHub issues already stored in PostgreSQL.
 - **Live GitHub search** — searches current public GitHub issues through the GitHub API and reranks the results.
@@ -44,7 +44,7 @@ The current reranking score uses:
 - 85% semantic similarity
 - 15% title word overlap
 
-The goal is not to claim an issue is definitely the fix. It is to move useful old reports closer to the top so they are faster to find.
+The goal is not to claim that an issue is definitely the fix. It is to move useful old reports closer to the top so they are faster to find.
 
 ## Data Used
 
@@ -57,7 +57,7 @@ That gives **11,336 indexed issues** across the two repositories.
 
 ## Evaluation
 
-I tested indexed search with 20 manually written bug descriptions across pandas and OpenMetadata. I paraphrased the bugs instead of copying the issue titles.
+I tested indexed search with 20 manually written bug descriptions across pandas and OpenMetadata. The descriptions were paraphrased instead of copied directly from issue titles.
 
 | Search Method | Hit@1 | Hit@5 | Hit@10 | MRR@10 |
 |---|---:|---:|---:|---:|
@@ -78,7 +78,7 @@ with the repository set to `psf/requests`, the issue I was looking for appeared 
 
 ## How to Run It Locally
 
-### 1. Clone the repo
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/ryanleem/github-bug-finder.git
@@ -93,7 +93,7 @@ python3 -m pip install -r requirements.txt
 
 ### 3. Install PostgreSQL
 
-Bug Finder uses PostgreSQL for stored issue data.
+Bug Finder uses PostgreSQL for indexed issue data.
 
 On macOS with Homebrew:
 
@@ -102,26 +102,19 @@ brew install postgresql@17
 brew services start postgresql@17
 ```
 
-The current local database settings are near the top of `app/main.py`:
+Before running the app, make sure the database settings near the top of `app/main.py` match your local PostgreSQL setup.
 
-```python
-DB_NAME = "openmetadata_bug_intelligence"
-DB_USER = "ryanleem"
-DB_HOST = "localhost"
-DB_PORT = 5432
-```
-
-Change `DB_USER` to your local PostgreSQL username before running the app on another machine. The project database also needs the tables/indexes used by the SQL files in `database/`.
+The project also needs the tables and indexes defined in the SQL files under `database/`.
 
 ### 4. Optional: set a GitHub token
 
-Live GitHub search works better with an API token because unauthenticated requests have a lower rate limit.
-
-Set it as an environment variable instead of putting it in the repository:
+Live GitHub search works without a token, but authenticated requests have a higher API rate limit.
 
 ```bash
 export GITHUB_TOKEN="your_token_here"
 ```
+
+Do not commit your token to the repository.
 
 ### 5. Start the app
 
@@ -129,7 +122,7 @@ export GITHUB_TOKEN="your_token_here"
 python3 -m uvicorn app.main:app --reload
 ```
 
-Open the local address shown in the terminal, normally:
+Then open:
 
 ```text
 http://127.0.0.1:8000
@@ -165,7 +158,7 @@ assets/       screenshots
 - Large repositories take longer to download and embed.
 - Search results are possible matches, not guaranteed fixes.
 - The manual evaluation set is still small.
-- Local PostgreSQL setup is currently configured in `app/main.py` rather than through a full setup script.
+- Local PostgreSQL setup still requires some manual configuration.
 
 ## Why I Made It
 
