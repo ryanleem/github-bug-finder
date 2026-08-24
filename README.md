@@ -91,15 +91,45 @@ cd github-bug-finder
 python3 -m pip install -r requirements.txt
 ```
 
+On Windows, if `python3` is not recognized, use:
+
+```powershell
+py -m pip install -r requirements.txt
+```
+
 ### 3. Install PostgreSQL
 
 Bug Finder uses PostgreSQL for indexed issue data.
 
-On macOS with Homebrew:
+#### macOS
+
+With Homebrew:
 
 ```bash
 brew install postgresql@17
 brew services start postgresql@17
+```
+
+#### Windows
+
+Download and install PostgreSQL from the official PostgreSQL Windows installer. During setup, remember the username, password, and port you choose. The default port is usually `5432`.
+
+After installation, PostgreSQL can be managed through **pgAdmin** or the PostgreSQL command-line tools installed with it.
+
+#### Ubuntu / Debian Linux
+
+```bash
+sudo apt update
+sudo apt install postgresql postgresql-contrib
+sudo systemctl enable --now postgresql
+```
+
+#### Fedora / RHEL Linux
+
+```bash
+sudo dnf install postgresql-server postgresql-contrib
+sudo postgresql-setup --initdb
+sudo systemctl enable --now postgresql
 ```
 
 Before running the app, make sure the database settings near the top of `app/main.py` match your local PostgreSQL setup.
@@ -110,16 +140,32 @@ The project also needs the tables and indexes defined in the SQL files under `da
 
 Live GitHub search works without a token, but authenticated requests have a higher API rate limit.
 
+macOS / Linux:
+
 ```bash
 export GITHUB_TOKEN="your_token_here"
+```
+
+Windows PowerShell:
+
+```powershell
+$env:GITHUB_TOKEN="your_token_here"
 ```
 
 Do not commit your token to the repository.
 
 ### 5. Start the app
 
+macOS / Linux:
+
 ```bash
 python3 -m uvicorn app.main:app --reload
+```
+
+Windows:
+
+```powershell
+py -m uvicorn app.main:app --reload
 ```
 
 Then open:
